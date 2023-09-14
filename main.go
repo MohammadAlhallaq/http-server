@@ -24,7 +24,8 @@ func main() {
 
 	router := api.NewRouter()
 
-	//router.Prefix("/auth").AuthEndPoints()
+	router.Prefix("/auth").AuthEndPoints()
+	router.Version("/v1").Prefix("/user").UserEndPoints()
 
 	if local {
 		srv = &http.Server{

@@ -2,20 +2,24 @@ package api
 
 import "net/http"
 
-type RouterInterface interface {
-	ServeHTTP(http.ResponseWriter, *http.Request)
-	Prefix(path string)
-}
-
-type myRouter struct {
+type router struct {
 	*http.ServeMux
 }
 
-func NewRouter() RouterInterface {
-	return &myRouter{http.NewServeMux()}
+func NewRouter() router {
+	return router{ServeMux: http.NewServeMux()}
 }
 
-func (r *myRouter) Prefix(path string) {
-	var handler http.Handler = r.ServeMux
+func (r router) Prefix(path string) router {
+	router := NewRouter()
+	var handler http.Handler = router
 	r.Handle(path+"/", http.StripPrefix(path, handler))
+	return router
+}
+
+func (r router) Version(v string) *router {
+	router := NewRouter()
+	var handler http.Handler = router
+	r.Handle(v+"/", http.StripPrefix(v, handler))
+	return &router
 }
